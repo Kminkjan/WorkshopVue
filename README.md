@@ -10,15 +10,17 @@ npm install
 npm run serve
 ```
 
-### Compiles and minifies for production
+### Assignment one
 ```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
+Retrieve messages in MessageList.vue
+Use the Message.vue component to display every message
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### Assignement two
+```
+Complete the computed values in Message.vue
+Display all the information regarding messages in Message.vue
+Make it more pretty!
+```
+
+
