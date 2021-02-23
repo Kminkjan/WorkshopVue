@@ -1,15 +1,35 @@
 import Vue from 'vue'
+import {loginAsUser, postMessage} from "@/store/firebase";
+
+const LOGGED_IN_USER_KEY = 'logged_in_user_key'
 
 /* Create a reactive store */
-const store = Vue.observable({  count: ''  })
+const store = Vue.observable({
+    messages: [],
+    users: [],
+    currentUserId: window.localStorage.getItem(LOGGED_IN_USER_KEY)
+})
 
 /* Create centralized actions for updating the store */
 const actions = {
-    incrementCount() {
-        store.count += 1
+    setMessages(newMessage) {
+        store.messages = newMessage
     },
-    decrementCount() {
-        store.count -= 1
+    setUsers(newUsers) {
+        store.users = newUsers
+    },
+    async login(user) {
+        // create the user
+        const createdUserId = await loginAsUser(user)
+
+        // set the id as logged in user key
+        store.currentUserId = createdUserId
+        window.localStorage.setItem(LOGGED_IN_USER_KEY, createdUserId)
+    },
+    async postMessage(message) {
+        message.from = store.currentUserId
+        message.time = Date.now()
+        await postMessage(message)
     }
 }
 

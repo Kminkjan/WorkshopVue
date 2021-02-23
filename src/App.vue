@@ -1,28 +1,121 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <v-app >
+    <v-app-bar
+      app
+      color="primary"
+      dark
+    >
+
+
+      <v-toolbar-title id="header">Chatbox</v-toolbar-title>
+
+      <v-spacer></v-spacer>
+
+
+      <span>{{user.name}}</span>
+
+    </v-app-bar>
+
+    <v-main class="blue-grey lighten-5">
+      <HelloWorld/>
+    </v-main>
+
+    <v-dialog
+        v-model="dialog"
+        persistent
+        max-width="290"
+    >
+      <v-card>
+        <v-card-title class="headline">
+          Register
+        </v-card-title>
+
+        <v-card-text>
+          Please enter an username
+        </v-card-text>
+
+        <v-card-text>
+          <v-text-field
+              label="Username"
+              required
+              v-model="username"
+          ></v-text-field>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+              color="green darken-1"
+              text
+              :disabled="!username"
+              @click="addUser">
+            Sumbit
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import HelloWorld from './components/Chatbox';
+import {listenToMessages} from "@/store/firebase";
 
 export default {
   name: 'App',
+
   components: {
-    HelloWorld
-  }
-}
+    HelloWorld,
+  },
+
+  mounted() {
+    listenToMessages(this.$actions)
+
+    console.log(this.$store.currentUserId)
+
+    if (!this.$store.currentUserId) {
+      this.dialog = true
+    }
+  },
+
+  methods: {
+    addUser () {
+      this.$actions.login({name: this.username})
+      this.dialog = false
+    }
+  },
+
+  computed: {
+    user () {
+      return this.$store.users.find(user => user.id ===  this.$store.currentUserId) || {}
+    }
+  },
+
+  data: () => ({
+    username: '',
+    dialog: false
+  }),
+};
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+  #header {
+    font-family: 'Raleway', sans-serif;
+  }
+
+  .v-main:before {
+    content: ' ';
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    opacity: 0.2;
+    background-image: url(./assets/pexels-scott-webb-27406.jpg);
+    background-repeat: no-repeat;
+    background-position: 50% 0;
+    background-size: cover;
+  }
 </style>
