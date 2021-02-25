@@ -3,7 +3,7 @@
     <p class="display-6 font-weight-bold mb-3">
       People registered
     </p>
-    <div v-for="user in users" :key="user.id" :style="'color: ' + user.color || 'black'">
+    <div v-for="user in users" :key="user.id" :class="(user.color || 'black') + '--text'">
       {{ user.name }} {{ user.color }}
     </div>
   </div>

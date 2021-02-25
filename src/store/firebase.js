@@ -14,8 +14,6 @@ const firebaseConfig = {
 const app = firebase.initializeApp(firebaseConfig)
 const db = app.firestore()
 
-export default app.firestore()
-
 export function listenToMessages (actions) {
     console.log(actions)
     db.collection("messages").orderBy("time", "desc").limit(50)

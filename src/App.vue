@@ -17,7 +17,7 @@
     </v-app-bar>
 
     <v-main class="blue-grey lighten-5">
-      <HelloWorld/>
+      <chatbox/>
     </v-main>
 
     <v-dialog
@@ -38,6 +38,7 @@
           <v-text-field
               label="Username"
               required
+              :rules="[rules.length(30)]"
               v-model="username"
           ></v-text-field>
         </v-card-text>
@@ -47,7 +48,7 @@
           <v-btn
               color="green darken-1"
               text
-              :disabled="!username"
+              :disabled="!username || username.length > 30"
               @click="addUser">
             Submit
           </v-btn>
@@ -58,14 +59,14 @@
 </template>
 
 <script>
-import HelloWorld from './components/Chatbox';
+import Chatbox from './components/Chatbox';
 import {listenToMessages} from "@/store/firebase";
 
 export default {
   name: 'App',
 
   components: {
-    HelloWorld,
+    Chatbox,
   },
 
   mounted() {
@@ -93,7 +94,10 @@ export default {
 
   data: () => ({
     username: '',
-    dialog: false
+    dialog: false,
+    rules: {
+      length: len => v => (v || '').length <= len || `Invalid character length, required ${len}`,
+    },
   }),
 };
 </script>
