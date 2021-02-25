@@ -15,7 +15,6 @@ const app = firebase.initializeApp(firebaseConfig)
 const db = app.firestore()
 
 export function listenToMessages (actions) {
-    console.log(actions)
     db.collection("messages").orderBy("time", "desc").limit(50)
         .onSnapshot((querySnapshot) => {
             actions.setMessages(querySnapshot.docs.map(doc => {
