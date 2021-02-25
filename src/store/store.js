@@ -19,11 +19,6 @@ const actions = {
         store.users = newUsers
     },
     async login(user) {
-        const colors = ['red', 'pink', 'purple', 'deep-purple', 'indigo', 'blue', 'light-blue', 'cyan', 'teal', 'green',
-            'light-green', 'lime', 'yellow', 'amber', 'orange', 'deep-orange', 'brown', 'blue-grey']
-
-        user.color = colors[Math.floor(Math.random() * colors.length)]
-
         // create the user
         const createdUserId = await loginAsUser(user)
 
