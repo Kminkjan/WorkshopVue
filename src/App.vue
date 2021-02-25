@@ -49,7 +49,7 @@
               text
               :disabled="!username"
               @click="addUser">
-            Sumbit
+            Submit
           </v-btn>
         </v-card-actions>
       </v-card>
