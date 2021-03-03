@@ -16,7 +16,7 @@
         ></v-textarea>
       </v-col>
       <v-col cols="auto">
-        <v-btn icon @click="postMessage"
+        <v-btn icon @click="postMessage" :disabled="rateLimited"
                color="blue">
           <v-icon dark>
             mdi-send
@@ -25,10 +25,10 @@
       </v-col>
     </v-row>
     <v-alert v-if="rateLimited"
-        border="right"
-        colored-border
-        type="error"
-        elevation="2"
+             border="right"
+             colored-border
+             type="error"
+             elevation="2"
              class="mt-3">
       Please stop spamming! 😅
     </v-alert>
@@ -36,17 +36,12 @@
 </template>
 
 <script>
-import {differenceInSeconds} from 'date-fns'
-
-let rlTimeout
-
 export default {
 
   name: 'MessageInput',
 
   components: {},
   data: () => ({
-    rateLimited: false,
     message: '',
     rules: {
       length: len => v => (v || '').length <= len || `Invalid character length, required ${len}`,
@@ -55,16 +50,7 @@ export default {
 
   methods: {
     postMessage() {
-      if (!this.message || this.message.length > 128) return
-
-      // Yeah I know, you can bypass the rate limiter by deleting these lines. Please don't ;)
-      if (this.messages.filter(message => differenceInSeconds(new Date(), new Date(message.time) ) < 10).length >= 5) {
-        this.rateLimited = true
-        clearTimeout(rlTimeout)
-        rlTimeout = setTimeout(() => this.rateLimited = false, 5000)
-        return
-      }
-
+      if (!this.message || this.message.length > 128 || this.rateLimited) return
       this.$actions.postMessage({message: this.message})
 
       // Then clear the message
@@ -75,6 +61,9 @@ export default {
   computed: {
     messages () {
       return this.$store.messages
+    },
+    rateLimited () {
+      return this.$store.rateLimited
     }
   }
 }

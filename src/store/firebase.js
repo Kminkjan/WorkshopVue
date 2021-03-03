@@ -1,5 +1,6 @@
 import firebase from 'firebase/app'
 import 'firebase/firestore'
+import 'firebase/functions'
 
 const firebaseConfig = {
     apiKey: "AIzaSyA5IVGZM5zGSP_kI3vstG60a47tpxn_5ls",
@@ -14,7 +15,10 @@ const firebaseConfig = {
 const app = firebase.initializeApp(firebaseConfig)
 const db = app.firestore()
 
+export default app.firestore()
+
 export function listenToMessages (actions) {
+    console.log(actions)
     db.collection("messages").orderBy("time", "desc").limit(50)
         .onSnapshot((querySnapshot) => {
             actions.setMessages(querySnapshot.docs.map(doc => {
@@ -40,11 +44,12 @@ export async function loginAsUser (user) {
 }
 
 export async function postMessage (message) {
+    const addMessage = firebase.functions().httpsCallable('postMessage')
     try {
-        const result = await db.collection("messages").add(message)
-        return result.id
+        await addMessage( message)
     } catch (e) {
         console.error(e)
+        throw 'RATE_LIMITED'
     }
 }
 

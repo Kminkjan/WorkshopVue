@@ -2,11 +2,13 @@ import Vue from 'vue'
 import {loginAsUser, postMessage} from "@/store/firebase";
 
 const LOGGED_IN_USER_KEY = 'logged_in_user_key'
+let rateLimitTimout
 
 /* Create a reactive store */
 const store = Vue.observable({
     messages: [],
     users: [],
+    rateLimited: false,
     currentUserId: window.localStorage.getItem(LOGGED_IN_USER_KEY)
 })
 
@@ -28,8 +30,17 @@ const actions = {
     },
     async postMessage(message) {
         message.from = store.currentUserId
-        message.time = Date.now()
-        await postMessage(message)
+
+        try {
+            await postMessage(message)
+        } catch (e) {
+            if (e === 'RATE_LIMITED') {
+                store.rateLimited = true
+
+                clearTimeout(rateLimitTimout)
+                rateLimitTimout = setTimeout(() => store.rateLimited = false, 5000)
+            }
+        }
     }
 }
 
